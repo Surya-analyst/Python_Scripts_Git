@@ -3,7 +3,13 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import matplotlib.pyplot as plt
 from docx.shared import Pt, RGBColor, Cm
+from docx2pdf import convert
+from datetime import date
 import tempfile
+
+Resume_Name = "Surya_Resume_Updated_On_" + str(date.today()) + ".pdf"
+#print(Resume_Name)
+
 
 def add_hyperlink(paragraph, text, url):
     # This gets access to the document.xml.rels file and gets a new relation id value
@@ -116,8 +122,8 @@ def create_resume():
     
     # Set document properties
     core_properties = doc.core_properties
-    core_properties.title = 'Professional Resume of Surya Prakash Murugan'
-    core_properties.author = 'Surya Prakash Murugan'
+    core_properties.title = 'Professional Resume of ####'
+    core_properties.author = '####'
     core_properties.subject = 'Resume'
     
     #set header & Adjust page margins (top and bottom)
@@ -135,7 +141,7 @@ def create_resume():
     d = add_hyperlink(header_para,'Click Here' ,'https://github.com/Surya-analyst/Python_Scripts_Git/blob/main/Resume_Generator_for_git.py')
  
     # Add header with name and contact details
-    doc.add_heading('Surya Prakash Murugan', level=1)
+    doc.add_heading('#####', level=1)
     contact_paragraph = doc.add_paragraph('Data Analyst\n')
     para = contact_paragraph.runs[0]
     para.font.name = 'Calibri'
@@ -143,13 +149,13 @@ def create_resume():
     para.bold = True
     para.font.color.rgb = RGBColor(88, 50, 164) 
     
-    add_hyperlink(contact_paragraph, '#####@gmail.com' ,'mailto:###@gmail.com')
-    add_hyperlink(contact_paragraph,'\nLinkedIn Profile Link','https://www.linkedin.com/in/msp1995/')
+    add_hyperlink(contact_paragraph, '#####@gmail.com\n' ,'mailto:###@gmail.com')
+    add_hyperlink(contact_paragraph,'LinkedIn Profile Link','https://www.linkedin.com/')
     run = contact_paragraph.add_run('\n(+91) ##### #####')
     run_font = run.font
     run_font.name = 'Calibri'
     run_font.size = Pt(10)
-    run = contact_paragraph.add_run('\nChennai - 600 118, Tamil Nadu')
+    run = contact_paragraph.add_run('\nCity - Pin Code, State')
     run_font = run.font
     run_font.name = 'Calibri'
     run_font.size = Pt(10)
@@ -259,23 +265,23 @@ def create_resume():
     # Add Education section
     doc.add_heading('Education', level=2)
     c = doc.add_paragraph('Bachelor of Engineering', style='Heading 3')
-    add_para(doc,'','R.M.D Engineering College, Chennai, Tamil Nadu, 07/2013 – 04/2014')
+    add_para(doc,'','Engineering College, City, State, 07/2013 – 04/2014')
     # Add an indent to the bullet
     p_format = c.paragraph_format
     p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
     
     c = doc.add_paragraph('Higher Secondary School Certificate', style='Heading 3')
-    add_para(doc,'','SRV Boys Higher Secondary School, Rasipuram, Tamil Nadu, 07/2012 – 04/2013')
+    add_para(doc,'','Higher Secondary School, City, State, 07/2012 – 04/2013')
     p_format = c.paragraph_format
     p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
 
     doc.add_heading('Additional Training or Certifications', level=2)
     c = doc.add_paragraph('MySQL for Data Analytics and Buisness Intelligence, 07/2020 - 08/2020, ', style='List Bullet')
-    d = add_hyperlink(c,'Certificate Link' ,'https://www.udemy.com/certificate/UC-3c8b12ac-16ab-441c-a5b8-a71f287c31c1/')
+    d = add_hyperlink(c,'Certificate Link' ,'https://www.udemy.com/')
     c = Custom_Style(c)
 
     c = doc.add_paragraph('Master Python by Coding 100 Practical Problems, 02/2024 - 03/2024, ', style='List Bullet')
-    d = add_hyperlink(c,'Certificate Link' ,'https://www.udemy.com/certificate/UC-f4484a94-e2bb-42b9-80f8-efff2f20ae24/')
+    d = add_hyperlink(c,'Certificate Link' ,'https://www.udemy.com/')
     c = Custom_Style(c)
 
     # Add Languages (Optional)  
@@ -285,10 +291,19 @@ def create_resume():
     c = Custom_Style(c)
     d = Custom_Style(d)
 
-    # Save the document
-    file_name = "Professional_Resume_Template.docx"
-    doc.save(file_name)
-    print(f"Resume template saved as {file_name}")
+    # Save the document as temp file to generate pdf
+    
+    with tempfile.NamedTemporaryFile(suffix='.docx', delete=False) as tmp_file:
+        filename = tmp_file.name
+        doc.save(filename)
+    plt.close()
+    
+    #convert the docx temp file to pdf
+    convert(filename, Resume_Name)
+    
+    #file_name = "Professional_Resume_Template.docx"
+    #doc.save(file_name)
+    #print(f"Resume template saved as {file_name}")
 
 # Call the function to create the resume
 create_resume()
