@@ -270,6 +270,7 @@ def create_resume():
     p_format = c.paragraph_format
     p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
     
+    
     c = doc.add_paragraph('Higher Secondary School Certificate', style='Heading 3')
     add_para(doc,'','Higher Secondary School, City, State, 07/2012 – 04/2013')
     p_format = c.paragraph_format
