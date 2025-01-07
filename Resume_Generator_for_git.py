@@ -131,7 +131,8 @@ def create_resume():
         
     # Add content to header
     header_para = header.paragraphs[0]
-    header_para.text = ">>> This resume was generated entirely in Python. For full sourcecode, view my portfolio."
+    header_para.text = ">>> This resume was generated entirely in Python. For full sourcecode "
+    d = add_hyperlink(header_para,'Click Here' ,'https://github.com/Surya-analyst/Python_Scripts_Git/blob/main/Resume_Generator_for_git.py')
  
     # Add header with name and contact details
     doc.add_heading('Surya Prakash Murugan', level=1)
