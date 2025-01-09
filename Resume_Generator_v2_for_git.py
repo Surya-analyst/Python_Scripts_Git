@@ -11,20 +11,28 @@ import tempfile
 from docx.enum.style import WD_STYLE_TYPE
 
 
-Docx_Name = "Surya_Resume_Updated_On_" + str(date.today()) + ".docx"
+#Docx_Name = "Surya_Resume_Updated_On_" + str(date.today()) + ".docx"
 Pdf_Name = "Surya_Resume_Updated_On_" + str(date.today()) + ".pdf"
 #print(Pdf_Name)
 
 
 #Perosnal Details
 
-Name = "XXXXX"
+Name = "XXXXX XXXXX"
 phone_symbol = "\U0001F4DE"
 Email_symbol = "\U0001F4E7"
 url_symbol = "\U0001F517"
-Contact_Number = f"{phone_symbol} (+xx) xxxxx xxxxx"
-Email_ID = f"xxxxx@gmail.com"
-LinkedIn_ID = f"www.linkedin.com/"
+Contact_Number = "(+XX) XXXXX XXXXX"
+Email_ID = "XXXXX@gmail.com"
+Email_link = "mailto:" + Email_ID
+LinkedIn = "www.linkedin.com/"
+LinkedIn_URL = "https://" + LinkedIn
+Contact_Number_link = Contact_Number
+Contact_Number_link = Contact_Number_link.replace("(","")
+Contact_Number_link = Contact_Number_link.replace(") ","")
+Contact_Number_link = Contact_Number_link.replace(" ","")
+Contact_Number_link = "tel: //" + Contact_Number_link
+#print(Contact_Number_link)
 
 def document_colour(doc):
     background = OxmlElement('w:background')
@@ -52,7 +60,7 @@ def add_hyperlink(paragraph, text, url):
     # Alternatively, set the run's formatting explicitly
     new_run.font.name = 'Calibri'
     new_run.font.size = Pt(10)
-    new_run.font.color.rgb = RGBColor(0, 0, 255)
+    new_run.font.color.rgb = RGBColor(79, 129, 189)
     new_run.font.underline = False
 
     # Join all the xml elements together
@@ -80,14 +88,11 @@ def Custom_Style(para):
     para.font.size = Pt(11)
     para.font.color.rgb = RGBColor(0x00, 0x00, 0x00) 
 
-def font_customization(para):
-    #para = para.runs[0]
-    para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    para = para.runs[0] if para.runs else paragraph.add_run()
-    para.font.name = 'Calibri'
-    para.font.size = Pt(10)
-    para.bold = False
-    para.font.color.rgb = RGBColor(0, 0, 0) 
+
+def symbol_customization(symbol):
+    symbol.font.name = "Segoe UI Emoji"
+    symbol.font.size = Pt(10)
+    symbol.font.color.rgb = RGBColor(97, 182, 205) #RGBColor(0x00, 0xB0, 0x50) #RGBColor(0, 176, 80)
     
     
         
@@ -153,7 +158,7 @@ def create_resume():
     
         para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
         
-    def add_company_details(doc, bold_text, regular_text, bold_text_2,font_name='Calibri', font_size=11, font_color=(0, 0, 0)):
+    def add_company_details(doc, bold_text, regular_text, date_from_to, company_info, font_name='Calibri', font_size=11, font_color=(0, 0, 0)):
         para = doc.add_paragraph('')
         
         bold_run = para.add_run(bold_text)
@@ -169,15 +174,24 @@ def create_resume():
         regular_font.size = Pt(font_size)
         regular_font.color.rgb = RGBColor(*font_color)
         
-        bold_run = para.add_run(bold_text_2)
-        bold_run.bold = True
-        bold_run.italics = True
-        bold_font = bold_run.font
-        bold_font.name = font_name
-        bold_font.size = Pt(font_size)
-        bold_font.color.rgb = RGBColor(*font_color)
+        
+        date_from_to_run = para.add_run(date_from_to + "\n")
+        date_from_to_run.bold = True
+        date_from_to_run_font = date_from_to_run.font
+        date_from_to_run_font.name = font_name
+        date_from_to_run_font.size = Pt(font_size)
+        date_from_to_run_font.color.rgb = RGBColor(*font_color)
+        
+        
+        company_info_run = para.add_run(company_info)
+        company_info_run.bold = False
+        company_info_run.italic = True
+        company_info_run_font = company_info_run.font
+        company_info_run_font.name = font_name
+        company_info_run_font.size = Pt(font_size)
+        company_info_run_font.color.rgb = RGBColor(*font_color)
     
-        para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        #para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     
     
     # Set document properties
@@ -189,7 +203,7 @@ def create_resume():
     #set header & Adjust page margins (top and bottom)
     
     section = doc.sections[0]# Choosing the top most section of the page
-    section.top_margin = Pt(0.7)  # Reduce the top margin for header
+    section.top_margin = Pt(60)  # Reduce the top margin for header
     section.bottom_margin = Pt(0.7)  # Reduce the bottom margin for footer
      
     # Selecting the header
@@ -198,20 +212,35 @@ def create_resume():
     # Add content to header
     header_para = header.paragraphs[0]
     header_para.text = ">>> This resume was generated entirely in Python. For full sourcecode "
+    # Customize the font properties for the entire paragraph
+    run = header_para.runs[0]  # Access the first run in the paragraph
+
+    # Set font name, size, and color
+    run.italic = True
+    run.font.name = 'Calibri'  # Set desired font
+    run.font.size = Pt(10)      # Set font size
+    run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)  # Set custom color (blue)
+    
     d = add_hyperlink(header_para,'Click Here' ,'https://github.com/Surya-analyst/Python_Scripts_Git/blob/main/Resume_Generator_v2_for_git.py')
  
     # Add header with name and contact details
-    doc.add_heading("\n" + Name, level=1).style = 'CustomHeading'
+    
+    doc.add_heading(Name, level=1).style = 'CustomHeading'
     Skills = doc.add_paragraph('Data Analyst | Excel | VBA | SQL | Python | Power BI | Tableau')
     Level1_customization(Skills)
     
     #Add contact details
     contact_paragraph = doc.add_paragraph()
-    contact_paragraph.add_run(Contact_Number + " | " + Email_symbol + " ")
-    add_hyperlink(contact_paragraph, Email_ID, 'mailto:suryaprakashmurugan95@gmail.com')
-    contact_paragraph.add_run(" | " + url_symbol + " ")
-    add_hyperlink(contact_paragraph, LinkedIn_ID, 'https://www.linkedin.com/in/msp1995/')
-    font_customization(contact_paragraph)
+    psym_run = contact_paragraph.add_run(phone_symbol)
+    symbol_customization(psym_run)
+    add_hyperlink(contact_paragraph," " + Contact_Number + " | ", Contact_Number_link)
+    esymbol_run = contact_paragraph.add_run(Email_symbol)
+    symbol_customization(esymbol_run)
+    add_hyperlink(contact_paragraph," " + Email_ID + " | ", Email_link)
+    usymbol_run = contact_paragraph.add_run(url_symbol)
+    symbol_customization(usymbol_run)
+    add_hyperlink(contact_paragraph," " + LinkedIn , LinkedIn_URL)
+    contact_paragraph.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
    
     
     # Add Professional Summary
@@ -268,52 +297,52 @@ def create_resume():
     # Add Professional Experience
     doc.add_heading('Professional Experience', level=2)
     doc.add_paragraph('Assistant Manager - MIS', style='Heading 3')
-    add_company_details(doc,'Standard Chartered Bank - GBS ', 'Chennai, ','07/2023 – Present')
-    add_bullet_point(doc, '','Automated daily report consolidation and data extraction using Power Query, improving data accuracy and efficiency.')
-    add_bullet_point(doc, '', 'Developed solutions with Excel User Forms, VBA, and Power Query, enhancing process speed and reliability.')
-    add_bullet_point(doc, '', 'Created dynamic tools for seamless data management between MS Access and Excel.')
-    add_bullet_point(doc, '', 'Implemented automated reporting for trend analysis and productivity, enabling data-driven decision-making.')
+    add_company_details(doc,'Standard Chartered Bank - GBS, ', 'Chennai','\t' * 4 + ' ' * 9 + '07/2023 – Present', 'A global bank with comprehensive financial services.')
+    add_bullet_point(doc, '','Automate daily report consolidation and data extraction using Power Query, improving data accuracy and efficiency.')
+    add_bullet_point(doc, '', 'Develop solutions with Excel User Forms, VBA, and Power Query, enhancing process speed and reliability.')
+    add_bullet_point(doc, '', 'Create dynamic tools for seamless data management between MS Access and Excel.')
+    add_bullet_point(doc, '', 'Implement automated reporting for trend analysis and productivity, enabling data-driven decision-making.')
   
     doc.add_page_break()
-    doc.add_paragraph()
-    doc.add_paragraph('Data Analyst', style='Heading 3')
-    add_company_details(doc,'Optum Health Care Business Services & Technology, ','Chennai, ','03/2021 – 07/2023')
+    #doc.add_paragraph('')
+    a = doc.add_paragraph('Data Analyst', style='Heading 3')
+    add_company_details(doc,'Optum Health Care Business Services & Technology, ','Chennai','\t' * 2 + ' ' * 8 +'03/2021 – 07/2023', 'A healthcare technology company providing services to improve healthcare delivery.')
     #add_bullet_point(doc, '', '')
-    add_bullet_point(doc, '', 'Extracted, cleaned, and analyzed large datasets, ensuring quality data for business insights.')
+    add_bullet_point(doc, '', 'Extract, clean, and analyze large datasets, ensuring quality data for business insights.')
     add_bullet_point(doc, '', 'Led project planning, task scheduling, and documentation for healthcare solutions.')
-    add_bullet_point(doc, '', 'Coordinated with cross-functional teams to deliver client projects successfully.')
-    add_bullet_point(doc, '', 'Developed SQL queries and automated reporting to support management decisions.')
+    add_bullet_point(doc, '', 'Coordinate with cross-functional teams to deliver client projects successfully.')
+    add_bullet_point(doc, '', 'Develop SQL queries and automate reporting to support management decisions.')
     
     doc.add_paragraph('Technical Process Specialist', style='Heading 3')
-    add_company_details(doc,'Infosys, ','Bangalore, ','09/2020 – 03/2021')
+    add_company_details(doc,'Infosys, ','Bangalore','\t' * 7 + ' ' * 8 + '09/2020 – 03/2021', 'A multinational corporation that provides business consulting, information technology, and outsourcing services.')
     #add_bullet_point(doc, '', '')
-    add_bullet_point(doc, '', 'Extracted and analyzed data from CMS platforms for custom reporting.')
-    add_bullet_point(doc, '', 'Built Excel dashboards and managed MySQL databases for data operations.')
-    add_bullet_point(doc, '', 'Delivered stakeholder reports, ensuring clear communication of insights.')
+    add_bullet_point(doc, '', 'Extract and analyze data from CMS platforms for custom reporting.')
+    add_bullet_point(doc, '', 'Build Excel dashboards and manage SQL databases for data operations.')
+    add_bullet_point(doc, '', 'Deliver stakeholder reports, ensuring clear communication of insights.')
 
     doc.add_paragraph('Project Coordinator', style='Heading 3')
-    add_company_details(doc,'Origin Learning Solutions Pvt Ltd, ','Chennai, ','10/2018 – 01/2020')
+    add_company_details(doc,'Origin Learning Solutions Pvt Ltd, ','Chennai','\t' * 4 + ' ' * 8 + '10/2018 – 01/2020', 'An organization focused on learning solutions and educational content.')
     #add_bullet_point(doc, '', '')
-    add_bullet_point(doc, '', 'Managed project schedules, resources, and milestones for smooth execution.')
-    add_bullet_point(doc, '', 'Collaborated with stakeholders to define objectives and monitor progress.')
-    add_bullet_point(doc, '', 'Developed risk assessments and contingency plans to mitigate project issues.')
+    add_bullet_point(doc, '', 'Manage project schedules, resources, and milestones for smooth execution.')
+    add_bullet_point(doc, '', 'Collaborate with stakeholders to define objectives and monitor progress.')
+    add_bullet_point(doc, '', 'Develop risk assessments and contingency plans to mitigate project issues.')
     
     doc.add_paragraph('Project Associate', style='Heading 3')
-    add_company_details(doc,'Emerson Automation Solutions Pvt Ltd, ','Chennai, ','10/2018 – 01/2020')
+    add_company_details(doc,'Emerson Automation Solutions Pvt Ltd, ','Chennai','\t' * 3 + ' ' * 8 + '07/2017 – 07/2018', 'A company specializing in automation solutions for a variety of industries.')
     #add_bullet_point(doc, '', '')
-    add_bullet_point(doc, '', 'Oversaw PMO tasks, delivery schedules, and technical document submissions.')
-    add_bullet_point(doc, '', 'Maintained client relationships by addressing feedback and meeting deadlines.')
+    add_bullet_point(doc, '', 'Oversee PMO tasks, delivery schedules, and technical document submissions.')
+    add_bullet_point(doc, '', 'Maintain client relationships by addressing feedback and meeting deadlines.')
    
     # Add Education section
     doc.add_heading('Education', level=2)
     c = doc.add_paragraph('Bachelor of Engineering', style='Heading 3')
-    add_para(doc,'','R.M.D Engineering College, Chennai, 2017')
+    add_para(doc,'','R.M.D Engineering College(2017)')
     # Add an indent to the bullet
     p_format = c.paragraph_format
     p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
     
     c = doc.add_paragraph('Higher Secondary School Certificate', style='Heading 3')
-    add_para(doc,'','SRV Boys Higher Secondary School, Rasipuram, 2013')
+    add_para(doc,'','SRV Boys Higher Secondary School(2013)')
     p_format = c.paragraph_format
     p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
 
@@ -335,17 +364,17 @@ def create_resume():
 
     # Save the document as temp file to generate pdf
     
-#    with tempfile.NamedTemporaryFile(suffix='.docx', delete=False) as tmp_file:
-#        filename = tmp_file.name
-#        doc.save(filename)
+    with tempfile.NamedTemporaryFile(suffix='.docx', delete=False) as tmp_file:
+        filename = tmp_file.name
+        doc.save(filename)
     plt.close()
     
     #convert the docx temp file to pdf
-    #convert(filename, Resume_Name)
+    convert(filename, Pdf_Name)
     
     #file_name = "Professional_Resume_Template.docx"
-    doc.save(Docx_Name)
-    convert(Docx_Name, Pdf_Name)
+    # doc.save(Docx_Name)
+    # convert(Docx_Name, Pdf_Name)
     print(f"Resume template saved as {Pdf_Name}")
 
 # Call the function to create the resume
