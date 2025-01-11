@@ -1,210 +1,54 @@
-import docx
-from docx.oxml.shared import OxmlElement
-from docx.oxml.ns import qn
-from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-import matplotlib.pyplot as plt
-from docx.shared import Pt, RGBColor, Cm
-from docx2pdf import convert
-from datetime import date
-import tempfile
-from docx.enum.style import WD_STYLE_TYPE
+from Resume_Generator_Custom_Definitions import *
 
-
-#Docx_Name = "Surya_Resume_Updated_On_" + str(date.today()) + ".docx"
+#filename = "Surya_Resume_Updated_On_" + str(date.today()) + ".docx"
 Pdf_Name = "Surya_Resume_Updated_On_" + str(date.today()) + ".pdf"
-#print(Pdf_Name)
 
-
-#Perosnal Details
-
-Name = "XXXXX XXXXX"
+#define Perosnal Details
+Name = "XXXXX XXXXX" #XXXXX XXXXX
 phone_symbol = "\U0001F4DE"
 Email_symbol = "\U0001F4E7"
 url_symbol = "\U0001F517"
-Contact_Number = "(+XX) XXXXX XXXXX"
-Email_ID = "XXXXX@gmail.com"
+Contact_Number = "(+XX) XXXXX XXXXX" #(+XX) XXXXX XXXXX
+Email_ID = "XXXXXXXXXX@gmail.com" #XXXXXXXXXX
 Email_link = "mailto:" + Email_ID
-LinkedIn = "www.linkedin.com/"
+LinkedIn = "www.linkedin.com" #"www.linkedin.com"
 LinkedIn_URL = "https://" + LinkedIn
 Contact_Number_link = Contact_Number
 Contact_Number_link = Contact_Number_link.replace("(","")
 Contact_Number_link = Contact_Number_link.replace(") ","")
 Contact_Number_link = Contact_Number_link.replace(" ","")
 Contact_Number_link = "tel: //" + Contact_Number_link
-#print(Contact_Number_link)
 
-def document_colour(doc):
-    background = OxmlElement('w:background')
-    background.set(qn('w:color'), 'F3F9FB')     # F0F8FA Define black background
-    doc.element.insert(0, background)      # Insert it
-    background_shp = OxmlElement('w:displayBackgroundShape') # Setting to use my background
-    doc.settings.element.insert(0, background_shp)      # Apply setting
-                
-def add_hyperlink(paragraph, text, url):
-    # This gets access to the document.xml.rels file and gets a new relation id value
-    part = paragraph.part
-    r_id = part.relate_to(url, docx.opc.constants.RELATIONSHIP_TYPE.HYPERLINK, is_external=True)
+#declare document color
+doc_color = '#FEFDF4'
 
-    # Create the w:hyperlink tag and add needed values
-    hyperlink = OxmlElement('w:hyperlink')
-    hyperlink.set(docx.oxml.shared.qn('r:id'), r_id, )
-
-    # Create a new run object (a wrapper over a 'w:r' element)
-    new_run = docx.text.run.Run(
-        OxmlElement('w:r'), paragraph)
-    new_run.text = text
-
-    # Set the run's style to the builtin hyperlink style, defining it if necessary
-    #new_run.style = get_or_create_hyperlink_style(part.document)
-    # Alternatively, set the run's formatting explicitly
-    new_run.font.name = 'Calibri'
-    new_run.font.size = Pt(10)
-    new_run.font.color.rgb = RGBColor(79, 129, 189)
-    new_run.font.underline = False
-
-    # Join all the xml elements together
-    hyperlink.append(new_run._element)
-    paragraph._p.append(hyperlink)
-    return hyperlink
-
-def Level1_customization(para):
-    para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    para = para.runs[0]
-    para.font.name = 'Calibri'
-    para.font.size = Pt(13)
-    para.bold = True
-    para.font.color.rgb = RGBColor(97, 182, 205) #RGBColor(88, 50, 164) 
-
-
-def Custom_Style(para):
-    # Add an indent to the bullet
-    p_format = para.paragraph_format
-    p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
-    p_format.first_line_indent = Cm(-0.5)  # Negative indent for hanging bullet
-    
-    para = para.runs[0]
-    para.font.name = 'Calibri'
-    para.font.size = Pt(11)
-    para.font.color.rgb = RGBColor(0x00, 0x00, 0x00) 
-
-
-def symbol_customization(symbol):
-    symbol.font.name = "Segoe UI Emoji"
-    symbol.font.size = Pt(10)
-    symbol.font.color.rgb = RGBColor(97, 182, 205) #RGBColor(0x00, 0xB0, 0x50) #RGBColor(0, 176, 80)
-    
-    
-        
 def create_resume():
     # Create a new Word Document
     doc = Document()
+   
+    # Set document properties
+    core_properties = doc.core_properties
+    core_properties.title = 'Professional Resume of ' + Name
+    core_properties.author = Name
+    core_properties.subject = 'Resume'
     
     #Set document layout, background colours, etc
-    document_colour(doc)
+    document_colour(doc, doc_color)
     
-    # Define a custom style for headings
+    # Define a custom style for name heading
     heading_style = doc.styles.add_style('CustomHeading', WD_STYLE_TYPE.PARAGRAPH)
     heading_style.font.name = 'Calibri'
     heading_style.font.size = Pt(16)
     heading_style.font.color.rgb = RGBColor(0, 0, 0) 
     heading_style.font.bold = True
     heading_style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    
-    def add_bullet_point(doc, bold_text, regular_text, font_name='Calibri', font_size=11, font_color=(0, 0, 0)):
-        para = doc.add_paragraph('', style='List Bullet')
-        
-        # Add an indent to the bullet
-        p_format = para.paragraph_format
-        p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
-        p_format.first_line_indent = Cm(-0.5)  # Negative indent for hanging bullet
-        
-        bold_run = para.add_run(bold_text)
-        bold_run.bold = True
-        bold_font = bold_run.font
-        bold_font.name = font_name
-        bold_font.size = Pt(font_size)
-        bold_font.color.rgb = RGBColor(*font_color)
-        
-        regular_run  = para.add_run(regular_text)
-        regular_font = regular_run.font
-        regular_font.name = font_name
-        regular_font.size = Pt(font_size)
-        regular_font.color.rgb = RGBColor(*font_color)
-        
-        para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
-    
-    def add_para(doc, bold_text, regular_text, font_name='Calibri', font_size=11, font_color=(0, 0, 0)):
-        para = doc.add_paragraph('')
-        
-        # Add an indent to the bullet
-        p_format = para.paragraph_format
-        #p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
-        p_format.first_line_indent = Cm(1.0)  # Negative indent for hanging bullet
-        
-        bold_run = para.add_run(bold_text)
-        bold_run.bold = True
-        bold_font = bold_run.font
-        bold_font.name = font_name
-        bold_font.size = Pt(font_size)
-        bold_font.color.rgb = RGBColor(*font_color)
-        
-        regular_run  = para.add_run(regular_text)
-        regular_font = regular_run.font
-        regular_font.name = font_name
-        regular_font.size = Pt(font_size)
-        regular_font.color.rgb = RGBColor(*font_color)
-    
-        para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-        
-    def add_company_details(doc, bold_text, regular_text, date_from_to, company_info, font_name='Calibri', font_size=11, font_color=(0, 0, 0)):
-        para = doc.add_paragraph('')
-        
-        bold_run = para.add_run(bold_text)
-        bold_run.bold = True
-        bold_font = bold_run.font
-        bold_font.name = font_name
-        bold_font.size = Pt(font_size)
-        bold_font.color.rgb = RGBColor(*font_color)
-        
-        regular_run  = para.add_run(regular_text)
-        regular_font = regular_run.font
-        regular_font.name = font_name
-        regular_font.size = Pt(font_size)
-        regular_font.color.rgb = RGBColor(*font_color)
-        
-        
-        date_from_to_run = para.add_run(date_from_to + "\n")
-        date_from_to_run.bold = True
-        date_from_to_run_font = date_from_to_run.font
-        date_from_to_run_font.name = font_name
-        date_from_to_run_font.size = Pt(font_size)
-        date_from_to_run_font.color.rgb = RGBColor(*font_color)
-        
-        
-        company_info_run = para.add_run(company_info)
-        company_info_run.bold = False
-        company_info_run.italic = True
-        company_info_run_font = company_info_run.font
-        company_info_run_font.name = font_name
-        company_info_run_font.size = Pt(font_size)
-        company_info_run_font.color.rgb = RGBColor(*font_color)
-    
-        #para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    
-    
-    # Set document properties
-    core_properties = doc.core_properties
-    core_properties.title = 'Professional Resume of Surya Prakash Murugan'
-    core_properties.author = 'Surya Prakash Murugan'
-    core_properties.subject = 'Resume'
     
     #set header & Adjust page margins (top and bottom)
     
-    section = doc.sections[0]# Choosing the top most section of the page
-    section.top_margin = Pt(60)  # Reduce the top margin for header
-    section.bottom_margin = Pt(0.7)  # Reduce the bottom margin for footer
+    section = doc.sections[0] #Choosing the top most section of the page
+    section.top_margin = Pt(60)  #Reduce the top margin for header
+    section.bottom_margin = Pt(0.7)  #Reduce the bottom margin for footer
      
     # Selecting the header
     header = section.header
@@ -212,15 +56,7 @@ def create_resume():
     # Add content to header
     header_para = header.paragraphs[0]
     header_para.text = ">>> This resume was generated entirely in Python. For full sourcecode "
-    # Customize the font properties for the entire paragraph
-    run = header_para.runs[0]  # Access the first run in the paragraph
-
-    # Set font name, size, and color
-    run.italic = True
-    run.font.name = 'Calibri'  # Set desired font
-    run.font.size = Pt(10)      # Set font size
-    run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)  # Set custom color (blue)
-    
+    header_custmizaion(header_para)
     d = add_hyperlink(header_para,'Click Here' ,'https://github.com/Surya-analyst/Python_Scripts_Git/blob/main/Resume_Generator_v2_for_git.py')
  
     # Add header with name and contact details
@@ -241,20 +77,35 @@ def create_resume():
     symbol_customization(usymbol_run)
     add_hyperlink(contact_paragraph," " + LinkedIn , LinkedIn_URL)
     contact_paragraph.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-   
     
+    paragraph_format = contact_paragraph.paragraph_format
+    paragraph_format.space_after = 0  # Minimize space after the paragraph after the line
+    paragraph_format.space_before = 0 # Minimize space before the paragraph before the line
+    
+    #to insert horizontal line
+    doc.add_paragraph()
+    add_horizontal_line(doc)
+     
     # Add Professional Summary
     doc.add_heading('Professional Summary', level=2)
-    para = add_para(doc,'','Results-driven Data Analyst with 6 years of experience in leveraging data to drive actionable insights and strategic decisions. Proficient in Data Fetching, Data cleansing, data preparation and data visualization using tools such as SQL, Excel, VBA, Python, Tableau and PowerBI. Adept at collaborating with cross-functional teams to identify key business challenges and implement data-driven solutions that optimize performance.')
-   
+    add_para(doc,'','Results-driven Data Analyst with 6 years of experience in leveraging data to drive actionable insights and strategic decisions. Proficient in Data Fetching, Data cleansing, data preparation and data visualization using tools such as SQL, Excel, VBA, Python, Tableau and PowerBI. Adept at collaborating with cross-functional teams to identify key business challenges and implement data-driven solutions that optimize performance.')
+    
+    #to insert horizontal line
+    doc.add_paragraph()
+    add_horizontal_line(doc)
+  
     # Add Core Skills
-    doc.add_heading('Core Skills', level=2)
+    a = doc.add_heading('Core Skills', level=2)
     add_bullet_point(doc, '', 'Data Analysis & Reporting (SQL, Excel, Tableau, PowerBI)')
     add_bullet_point(doc, '', 'Data Automation & Process Optimization (VBA, Python, Power Query)')
     add_bullet_point(doc, '', 'Project Coordination & Documentation')
     add_bullet_point(doc, '', 'Stakeholder Communication & Collaboration')
-
-    # Add Skills section with bar graph
+    
+    #to insert horizontal line
+    doc.add_paragraph()
+    add_horizontal_line(doc)
+   
+    # Add Skill rating section with bar graph
     doc.add_heading('Skill Rating', level=2)
     skills = ["Excel", "MySQL", "VBA", "Python", "Power BI", "Tableau"]
     ratings = [5, 4, 3, 3, 3, 3]
@@ -273,15 +124,15 @@ def create_resume():
         # Draw rating bar
         plt.barh(y=i, width=rating, color=bar_colors[i], height=bar_height, edgecolor='none')
         # Add text for the rating and skill
-        plt.text(rating - 0.9, i, f"{rating} / {max_rating}", va='center', ha='center', color='white', fontsize=9, weight='bold')
-        plt.text(-0.99, i, skill, va='center', ha='left', color='black', fontsize=9)
+        plt.text(rating - 0.9, i, f"{rating} / {max_rating}", va='center', ha='center', color='white', fontsize=11, weight='bold', fontname = 'Calibri')
+        plt.text(-0.99, i, skill, va='center', ha='left', color='black', fontsize=11, fontname = 'Calibri')
 
     # Remove axes and labels for clean look
     plt.gca().invert_yaxis()  # Invert y-axis for descending order
     plt.axis('off')  # Hide the axes
 
     # Set background color
-    plt.gcf().patch.set_facecolor('#F3F9FB')  # Light blue background
+    plt.gcf().patch.set_facecolor(doc_color)  # match document color
 
     # Show or Save the chart as an image
     plt.tight_layout()
@@ -293,6 +144,8 @@ def create_resume():
     
     # Add the chart to the Word document
     doc.add_picture(chart_path, width=doc.sections[0].page_width * 0.4)  # Scale image to fit page
+    #to insert horizontal line
+    add_horizontal_line(doc)
     
     # Add Professional Experience
     doc.add_heading('Professional Experience', level=2)
@@ -332,20 +185,23 @@ def create_resume():
     #add_bullet_point(doc, '', '')
     add_bullet_point(doc, '', 'Oversee PMO tasks, delivery schedules, and technical document submissions.')
     add_bullet_point(doc, '', 'Maintain client relationships by addressing feedback and meeting deadlines.')
+    
+    #to insert horizontal line
+    doc.add_paragraph()
+    add_horizontal_line(doc)
    
     # Add Education section
     doc.add_heading('Education', level=2)
     c = doc.add_paragraph('Bachelor of Engineering', style='Heading 3')
-    add_para(doc,'','R.M.D Engineering College(2017)')
+    add_para(doc,'','R.M.D Engineering College (2017)')
     # Add an indent to the bullet
     p_format = c.paragraph_format
     p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
-    
-    c = doc.add_paragraph('Higher Secondary School Certificate', style='Heading 3')
-    add_para(doc,'','SRV Boys Higher Secondary School(2013)')
-    p_format = c.paragraph_format
-    p_format.left_indent = Cm(1.0)  # Indent bullet by 1 cm (adjust as needed)
 
+    #to insert horizontal line
+    doc.add_paragraph()
+    add_horizontal_line(doc)
+    
     doc.add_heading('Additional Training or Certifications', level=2)
     c = doc.add_paragraph('MySQL for Data Analytics and Buisness Intelligence (2020), ', style='List Bullet')
     d = add_hyperlink(c,'Certificate Link' ,'https://www.udemy.com/certificate/UC-3c8b12ac-16ab-441c-a5b8-a71f287c31c1/')
@@ -354,6 +210,11 @@ def create_resume():
     c = doc.add_paragraph('Master Python by Coding 100 Practical Problems (2024), ', style='List Bullet')
     d = add_hyperlink(c,'Certificate Link' ,'https://www.udemy.com/certificate/UC-f4484a94-e2bb-42b9-80f8-efff2f20ae24/')
     c = Custom_Style(c)
+    
+    #to insert horizontal line
+    doc.add_paragraph()
+    add_horizontal_line(doc)
+    
 
     # Add Languages (Optional)  
     doc.add_heading('Languages', level=2)
@@ -362,8 +223,10 @@ def create_resume():
     c = Custom_Style(c)
     d = Custom_Style(d)
 
-    # Save the document as temp file to generate pdf
+    # Save the document
+    # doc.save(filename)
     
+    # Save the document as temp file to generate pdf
     with tempfile.NamedTemporaryFile(suffix='.docx', delete=False) as tmp_file:
         filename = tmp_file.name
         doc.save(filename)
@@ -372,10 +235,5 @@ def create_resume():
     #convert the docx temp file to pdf
     convert(filename, Pdf_Name)
     
-    #file_name = "Professional_Resume_Template.docx"
-    # doc.save(Docx_Name)
-    # convert(Docx_Name, Pdf_Name)
-    print(f"Resume template saved as {Pdf_Name}")
-
 # Call the function to create the resume
 create_resume()
