@@ -1,17 +1,29 @@
 from Resume_Generator_Custom_Definitions import *
 
-#filename = "Surya_Resume_Updated_On_" + str(date.today()) + ".docx"
+# filename = "Surya_Resume_Updated_On_" + str(date.today()) + ".docx"
 Pdf_Name = "Surya_Resume_Updated_On_" + str(date.today()) + ".pdf"
 
-#define Perosnal Details
-Name = "XXXXX XXXXX" #XXXXX XXXXX
+#Defining UTF Codes used
 phone_symbol = "\U0001F4DE"
 Email_symbol = "\U0001F4E7"
 url_symbol = "\U0001F517"
+summary_symbol = "\U0001F4CC"
+skill_symbol = "\U00002705"
+rating_symbol = "\U00002B50"
+office_symbol = "\U0001F3E2"
+calender_symbol = "\U0001F4C6"
+education_symbol = "\U0001F393"
+certification_symbol = "\U0001F3C6"
+Language_symbol = "\U0001F5E3"
+
+
+
+#define Perosnal Details
+Name = "XXXXX XXXXX" #XXXXX XXXXX
 Contact_Number = "(+XX) XXXXX XXXXX" #(+XX) XXXXX XXXXX
 Email_ID = "XXXXXXXXXX@gmail.com" #XXXXXXXXXX
 Email_link = "mailto:" + Email_ID
-LinkedIn = "www.linkedin.com" #"www.linkedin.com"
+LinkedIn = "www.linkedin.com" #www.linkedin.com
 LinkedIn_URL = "https://" + LinkedIn
 Contact_Number_link = Contact_Number
 Contact_Number_link = Contact_Number_link.replace("(","")
@@ -87,7 +99,7 @@ def create_resume():
     add_horizontal_line(doc)
      
     # Add Professional Summary
-    doc.add_heading('Professional Summary', level=2)
+    doc.add_heading(summary_symbol + ' Professional Summary', level=2)
     add_para(doc,'','Results-driven Data Analyst with 6 years of experience in leveraging data to drive actionable insights and strategic decisions. Proficient in Data Fetching, Data cleansing, data preparation and data visualization using tools such as SQL, Excel, VBA, Python, Tableau and PowerBI. Adept at collaborating with cross-functional teams to identify key business challenges and implement data-driven solutions that optimize performance.')
     
     #to insert horizontal line
@@ -95,7 +107,7 @@ def create_resume():
     add_horizontal_line(doc)
   
     # Add Core Skills
-    a = doc.add_heading('Core Skills', level=2)
+    a = doc.add_heading(skill_symbol + ' Core Skills', level=2)
     add_bullet_point(doc, '', 'Data Analysis & Reporting (SQL, Excel, Tableau, PowerBI)')
     add_bullet_point(doc, '', 'Data Automation & Process Optimization (VBA, Python, Power Query)')
     add_bullet_point(doc, '', 'Project Coordination & Documentation')
@@ -106,7 +118,7 @@ def create_resume():
     add_horizontal_line(doc)
    
     # Add Skill rating section with bar graph
-    doc.add_heading('Skill Rating', level=2)
+    doc.add_heading(rating_symbol + ' Skill Rating', level=2)
     skills = ["Excel", "MySQL", "VBA", "Python", "Power BI", "Tableau"]
     ratings = [5, 4, 3, 3, 3, 3]
     max_rating = 5  # Maximum possible rating
@@ -148,9 +160,9 @@ def create_resume():
     add_horizontal_line(doc)
     
     # Add Professional Experience
-    doc.add_heading('Professional Experience', level=2)
+    doc.add_heading(office_symbol+' Professional Experience', level=2)
     doc.add_paragraph('Assistant Manager - MIS', style='Heading 3')
-    add_company_details(doc,'Standard Chartered Bank - GBS, ', 'Chennai','\t' * 4 + ' ' * 9 + '07/2023 – Present', 'A global bank with comprehensive financial services.')
+    add_company_details(doc,'Standard Chartered Bank - GBS, ', 'Chennai','\t' * 4 + ' ' * 3 + calender_symbol + ' ' +'07/2023 – Present', 'A global bank with comprehensive financial services.')
     add_bullet_point(doc, '','Automate daily report consolidation and data extraction using Power Query, improving data accuracy and efficiency.')
     add_bullet_point(doc, '', 'Develop solutions with Excel User Forms, VBA, and Power Query, enhancing process speed and reliability.')
     add_bullet_point(doc, '', 'Create dynamic tools for seamless data management between MS Access and Excel.')
@@ -159,7 +171,7 @@ def create_resume():
     doc.add_page_break()
     #doc.add_paragraph('')
     a = doc.add_paragraph('Data Analyst', style='Heading 3')
-    add_company_details(doc,'Optum Health Care Business Services & Technology, ','Chennai','\t' * 2 + ' ' * 8 +'03/2021 – 07/2023', 'A healthcare technology company providing services to improve healthcare delivery.')
+    add_company_details(doc,'Optum Health Care Business Services & Technology, ','Chennai','\t' * 2 + ' ' * 0 + calender_symbol + ' ' +'03/2021 – 07/2023', 'A healthcare technology company providing services to improve healthcare delivery.')
     #add_bullet_point(doc, '', '')
     add_bullet_point(doc, '', 'Extract, clean, and analyze large datasets, ensuring quality data for business insights.')
     add_bullet_point(doc, '', 'Led project planning, task scheduling, and documentation for healthcare solutions.')
@@ -167,21 +179,21 @@ def create_resume():
     add_bullet_point(doc, '', 'Develop SQL queries and automate reporting to support management decisions.')
     
     doc.add_paragraph('Technical Process Specialist', style='Heading 3')
-    add_company_details(doc,'Infosys, ','Bangalore','\t' * 7 + ' ' * 8 + '09/2020 – 03/2021', 'A multinational corporation that provides business consulting, information technology, and outsourcing services.')
+    add_company_details(doc,'Infosys, ','Bangalore','\t' * 7 + ' ' * 1 + calender_symbol + ' ' + '09/2020 – 03/2021', 'A multinational corporation that provides business consulting, information technology, and outsourcing services.')
     #add_bullet_point(doc, '', '')
     add_bullet_point(doc, '', 'Extract and analyze data from CMS platforms for custom reporting.')
     add_bullet_point(doc, '', 'Build Excel dashboards and manage SQL databases for data operations.')
     add_bullet_point(doc, '', 'Deliver stakeholder reports, ensuring clear communication of insights.')
 
     doc.add_paragraph('Project Coordinator', style='Heading 3')
-    add_company_details(doc,'Origin Learning Solutions Pvt Ltd, ','Chennai','\t' * 4 + ' ' * 8 + '10/2018 – 01/2020', 'An organization focused on learning solutions and educational content.')
+    add_company_details(doc,'Origin Learning Solutions Pvt Ltd, ','Chennai','\t' * 4 + ' ' * 0 + calender_symbol + ' ' + '10/2018 – 01/2020', 'An organization focused on learning solutions and educational content.')
     #add_bullet_point(doc, '', '')
     add_bullet_point(doc, '', 'Manage project schedules, resources, and milestones for smooth execution.')
     add_bullet_point(doc, '', 'Collaborate with stakeholders to define objectives and monitor progress.')
     add_bullet_point(doc, '', 'Develop risk assessments and contingency plans to mitigate project issues.')
     
     doc.add_paragraph('Project Associate', style='Heading 3')
-    add_company_details(doc,'Emerson Automation Solutions Pvt Ltd, ','Chennai','\t' * 3 + ' ' * 8 + '07/2017 – 07/2018', 'A company specializing in automation solutions for a variety of industries.')
+    add_company_details(doc,'Emerson Automation Solutions Pvt Ltd, ','Chennai','\t' * 3 + ' ' * 1 + calender_symbol + ' ' + '07/2017 – 07/2018', 'A company specializing in automation solutions for a variety of industries.')
     #add_bullet_point(doc, '', '')
     add_bullet_point(doc, '', 'Oversee PMO tasks, delivery schedules, and technical document submissions.')
     add_bullet_point(doc, '', 'Maintain client relationships by addressing feedback and meeting deadlines.')
@@ -191,7 +203,7 @@ def create_resume():
     add_horizontal_line(doc)
    
     # Add Education section
-    doc.add_heading('Education', level=2)
+    doc.add_heading(education_symbol + ' Education', level=2)
     c = doc.add_paragraph('Bachelor of Engineering', style='Heading 3')
     add_para(doc,'','R.M.D Engineering College (2017)')
     # Add an indent to the bullet
@@ -202,7 +214,7 @@ def create_resume():
     doc.add_paragraph()
     add_horizontal_line(doc)
     
-    doc.add_heading('Additional Training or Certifications', level=2)
+    doc.add_heading( certification_symbol + ' Additional Training or Certifications', level=2)
     c = doc.add_paragraph('MySQL for Data Analytics and Buisness Intelligence (2020), ', style='List Bullet')
     d = add_hyperlink(c,'Certificate Link' ,'https://www.udemy.com/certificate/UC-3c8b12ac-16ab-441c-a5b8-a71f287c31c1/')
     c = Custom_Style(c)
@@ -217,21 +229,20 @@ def create_resume():
     
 
     # Add Languages (Optional)  
-    doc.add_heading('Languages', level=2)
+    doc.add_heading(Language_symbol + ' Languages', level=2)
     c = doc.add_paragraph('Tamil (Proficient)', style='List Bullet')
     d = doc.add_paragraph('English (Proficient)', style='List Bullet')
     c = Custom_Style(c)
     d = Custom_Style(d)
 
     # Save the document
-    # doc.save(filename)
+    #doc.save(filename)
     
     # Save the document as temp file to generate pdf
     with tempfile.NamedTemporaryFile(suffix='.docx', delete=False) as tmp_file:
         filename = tmp_file.name
         doc.save(filename)
-    plt.close()
-    
+
     #convert the docx temp file to pdf
     convert(filename, Pdf_Name)
     
